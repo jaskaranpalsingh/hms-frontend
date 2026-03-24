@@ -1,0 +1,90 @@
+.doctors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.25rem;
+}
+
+.doctor-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.doctor-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.doctor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(6, 182, 212, 0.08);
+}
+
+.doctor-card:hover::before { opacity: 1; }
+
+.doctor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.doctor-avatar {
+  width: 68px; height: 68px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+}
+
+.doctor-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(251, 191, 36, 0.08);
+  color: var(--warning-color);
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1px solid rgba(251, 191, 36, 0.18);
+}
+
+.star-icon { margin-top: -1px; }
+
+.doctor-info { margin-bottom: 1.25rem; }
+.doctor-info h3 { font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.2rem; font-weight: 700; }
+.specialty { color: var(--text-muted); font-size: 0.85rem; }
+
+.doctor-stats {
+  display: flex;
+  background: rgba(8, 13, 26, 0.5);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--glass-border);
+}
+
+.doctor-stats .stat { flex: 1; display: flex; flex-direction: column; align-items: center; }
+.doctor-stats .value { font-weight: 800; color: var(--text-main); font-size: 1rem; }
+.doctor-stats .label { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.doctor-stats .divider { width: 1px; background: var(--glass-border); margin: 0 0.5rem; }
+
+.doctor-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.doctor-actions .btn { font-size: 0.8rem; flex: 1; }
