@@ -8,10 +8,12 @@ import {
 import { messageService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useSocket } from '../context/SocketContext';
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import toast from 'react-hot-toast';
 
 const Messages = () => {
   const { user } = useAuth();
+  const { can } = useRBAC();  // ← RBAC
   const { socket, unreadMessages, clearUnread } = useSocket();
 
   // Helper for standardized ID extraction
@@ -416,13 +418,16 @@ const Messages = () => {
                      <ShieldCheck className="w-4 h-4 text-primary-600" />
                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Secure Link</span>
                   </div>
-                  <button 
-                    onClick={handleDeleteConversation}
-                    className="p-3 hover:bg-red-50 rounded-2xl text-slate-400 hover:text-red-500 transition-all group"
-                    title="Purge Conversation"
-                  >
-                     <Trash2 className="w-5 h-5 group-hover:animate-bounce" />
-                  </button>
+                  {/* RBAC: Only authorized users can purge history */}
+                  {can('delete') && (
+                    <button 
+                      onClick={handleDeleteConversation}
+                      className="p-3 hover:bg-red-50 rounded-2xl text-slate-400 hover:text-red-500 transition-all group"
+                      title="Purge Conversation"
+                    >
+                       <Trash2 className="w-5 h-5 group-hover:animate-bounce" />
+                    </button>
+                  )}
                </div>
             </div>
 
@@ -497,7 +502,8 @@ const Messages = () => {
                              )}
                              {msg.content && (
                                 <div className="group/msg relative">
-                                  {isMe && (
+                                  {/* RBAC: Message deletion check */}
+                                  {(isMe && can('delete')) && (
                                     <button 
                                       onClick={() => handleDeleteMessage(msg._id)}
                                       className="absolute -left-8 top-1/2 -translate-y-1/2 p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover/msg:opacity-100 transition-all active:scale-95"

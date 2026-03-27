@@ -24,33 +24,107 @@ const Placeholder = ({ title }) => (
   </div>
 );
 
+/**
+ * Route-level RBAC
+ * ─────────────────────────────────────────────────────────────
+ * Admin   → all routes
+ * Doctor  → dashboard, patients (view+update), appointments,
+ *            doctors, records, messages, settings
+ * Patient → dashboard, doctors, records (own), messages, settings
+ * Staff   → dashboard, appointments, patients, inventory, billing,
+ *            messages, settings
+ */
 function App() {
   const { user } = useAuth();
 
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={!user ? <Login /> : <Navigate to="/dashboard" replace />} />
-        <Route path="/login" element={<Navigate to="/" replace />} />
+        {/* ── Public Routes ───────────────────────────────── */}
+        <Route path="/"        element={!user ? <Login />    : <Navigate to="/dashboard" replace />} />
+        <Route path="/login"   element={!user ? <Login />    : <Navigate to="/dashboard" replace />} />
         <Route path="/register" element={!user ? <Register /> : <Navigate to="/dashboard" replace />} />
 
-        {/* Private Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
-        <Route path="/patients" element={<ProtectedRoute><Layout><Patients /></Layout></ProtectedRoute>} />
-        <Route path="/doctors" element={<ProtectedRoute><Layout><Doctors /></Layout></ProtectedRoute>} />
-        <Route path="/appointments" element={<ProtectedRoute><Layout><Appointments /></Layout></ProtectedRoute>} />
-        <Route path="/billing" element={<ProtectedRoute><Layout><Billing /></Layout></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Layout><Settings /></Layout></ProtectedRoute>} />
-        
-        {/* Module Specific / Admin Routes */}
-        <Route path="/records" element={<ProtectedRoute><Layout><MedicalRecords /></Layout></ProtectedRoute>} />
-        <Route path="/doctors-management" element={<ProtectedRoute allowedRoles={['admin']}><Layout><DoctorsManagement /></Layout></ProtectedRoute>} />
-        <Route path="/staff" element={<ProtectedRoute allowedRoles={['admin']}><Layout><Staff /></Layout></ProtectedRoute>} />
-        <Route path="/inventory" element={<ProtectedRoute><Layout><Inventory /></Layout></ProtectedRoute>} />
-        <Route path="/lab" element={<ProtectedRoute><Layout><Placeholder title="Lab Reports" /></Layout></ProtectedRoute>} />
-        <Route path="/messages" element={<ProtectedRoute><Layout><Messages /></Layout></ProtectedRoute>} />
+        {/* ── Shared / All-Roles ──────────────────────────── */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient', 'staff']}>
+            <Layout><Dashboard /></Layout>
+          </ProtectedRoute>
+        } />
 
+        <Route path="/messages" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient', 'staff']}>
+            <Layout><Messages /></Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/settings" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient', 'staff']}>
+            <Layout><Settings /></Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/doctors" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient', 'staff']}>
+            <Layout><Doctors /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Patients — Admin + Doctor + Staff ───────────── */}
+        <Route path="/patients" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'staff']}>
+            <Layout><Patients /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Appointments — Admin + Doctor + Staff ───────── */}
+        <Route path="/appointments" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient', 'staff']}>
+            <Layout><Appointments /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Medical Records — Admin + Doctor + Patient ──── */}
+        <Route path="/records" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor', 'patient']}>
+            <Layout><MedicalRecords /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Billing — Admin + Staff ─────────────────────── */}
+        <Route path="/billing" element={
+          <ProtectedRoute allowedRoles={['admin', 'staff']}>
+            <Layout><Billing /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Inventory — Admin + Staff ───────────────────── */}
+        <Route path="/inventory" element={
+          <ProtectedRoute allowedRoles={['admin', 'staff']}>
+            <Layout><Inventory /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Admin-Only Routes ────────────────────────────── */}
+        <Route path="/doctors-management" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <Layout><DoctorsManagement /></Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/staff" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <Layout><Staff /></Layout>
+          </ProtectedRoute>
+        } />
+
+        <Route path="/lab" element={
+          <ProtectedRoute allowedRoles={['admin', 'doctor']}>
+            <Layout><Placeholder title="Lab Reports" /></Layout>
+          </ProtectedRoute>
+        } />
+
+        {/* ── Fallback ─────────────────────────────────────── */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>

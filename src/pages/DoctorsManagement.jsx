@@ -3,19 +3,23 @@ import {
   Users, UserPlus, Search, 
   Filter, MoreHorizontal, Mail, 
   Phone, Briefcase, GraduationCap,
-  DollarSign, Trash2, Edit3, X,
+  IndianRupee, Trash2, Edit3, X,
   CheckCircle2, RefreshCw, ShieldCheck
 } from 'lucide-react';
 import { doctorService } from '../services/api';
 import AddDoctorModal from '../components/AddDoctorModal';
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import toast from 'react-hot-toast';
 
 const DoctorsManagement = () => {
+  const { can } = useRBAC();  // ← RBAC
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterSpecialty, setFilterSpecialty] = useState('All');
 
   const fetchDoctors = async () => {
     try {
@@ -53,6 +57,15 @@ const DoctorsManagement = () => {
     setIsModalOpen(true);
   };
 
+  const specialties = ['All', ...new Set(doctors.map(doc => doc.specialization))];
+
+  const filteredDoctors = doctors.filter(doc => {
+    const matchesSearch = doc.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          doc.specialization.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSpecialty = filterSpecialty === 'All' || doc.specialization === filterSpecialty;
+    return matchesSearch && matchesSpecialty;
+  });
+
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -79,14 +92,25 @@ const DoctorsManagement = () => {
               <input 
                 type="text" 
                 placeholder="Search by name or specialization..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-12 pr-4 py-3 bg-white border-2 border-slate-100 rounded-2xl focus:border-primary-600 outline-none font-bold text-slate-800 transition-all shadow-sm"
               />
            </div>
            <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-3 bg-white border-2 border-slate-100 rounded-2xl text-slate-600 font-bold hover:border-primary-600 transition-all shadow-sm">
-                 <Filter className="w-4 h-4" />
-                 All Specialities
-              </button>
+              <div className="relative">
+                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                <select
+                  value={filterSpecialty}
+                  onChange={(e) => setFilterSpecialty(e.target.value)}
+                  className="pl-11 pr-10 py-3 bg-white border-2 border-slate-100 rounded-2xl text-slate-600 font-bold hover:border-primary-600 transition-all shadow-sm outline-none appearance-none cursor-pointer"
+                >
+                  {specialties.map(s => <option key={s} value={s}>{s === 'All' ? 'All Specialities' : s}</option>)}
+                </select>
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                  <MoreHorizontal className="w-4 h-4 rotate-90" />
+                </div>
+              </div>
            </div>
         </div>
 
@@ -107,8 +131,8 @@ const DoctorsManagement = () => {
                 [1,2,3].map(i => (
                   <tr key={i}><td colSpan="6" className="p-8"><div className="h-12 bg-slate-50 animate-pulse rounded-2xl w-full"></div></td></tr>
                 ))
-              ) : doctors.length > 0 ? (
-                doctors.map(doc => (
+              ) : filteredDoctors.length > 0 ? (
+                filteredDoctors.map(doc => (
                   <tr key={doc._id} className="group hover:bg-primary-50/30 transition-colors">
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-4">
@@ -134,7 +158,7 @@ const DoctorsManagement = () => {
                        </div>
                     </td>
                     <td className="px-8 py-6">
-                       <p className="text-sm font-black text-primary-600">${doc.consultationFee}</p>
+                       <p className="text-sm font-black text-primary-600">₹{doc.consultationFee}</p>
                     </td>
                     <td className="px-8 py-6">
                        <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
@@ -151,12 +175,15 @@ const DoctorsManagement = () => {
                           >
                              <Edit3 className="w-4 h-4" />
                           </button>
+                          {/* RBAC: Delete guarded */}
+                          {can('delete') && (
                           <button 
                             onClick={() => handleDelete(doc._id)}
                             className="p-2 bg-white border border-slate-100 rounded-xl text-slate-400 hover:text-red-600 hover:border-red-100 shadow-sm transition-all"
                           >
                              <Trash2 className="w-4 h-4" />
                           </button>
+                          )}
                        </div>
                     </td>
                   </tr>

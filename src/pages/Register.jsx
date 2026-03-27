@@ -106,23 +106,9 @@ const Register = () => {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700 uppercase tracking-widest pl-1">Register As</label>
-              <div className="relative group">
-                <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary-600 transition-colors w-5 h-5 z-20" />
-                <select 
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-50 text-slate-900 rounded-2xl focus:ring-4 focus:ring-primary-600/10 focus:bg-white focus:border-primary-600 outline-none transition-all font-medium appearance-none relative z-10"
-                >
-                  <option value="patient">Patient</option>
-                  <option value="doctor">Doctor</option>
-                  <option value="staff">Hospital Staff</option>
-                  <option value="admin">Administrator</option>
-                </select>
-              </div>
-            </div>
+            {/* RBAC: Role selection removed per security policy. Only patients can self-register. */}
+            {/* Doctors, Staff, and Admins must be onboarded by the Super Admin. */}
+            <input type="hidden" name="role" value="patient" />
 
             <button 
               type="submit" 
@@ -134,7 +120,7 @@ const Register = () => {
               ) : (
                 <>
                   <UserPlus className="w-6 h-6" />
-                  Create Your Account
+                  Create Your Clinical Account
                 </>
               )}
             </button>

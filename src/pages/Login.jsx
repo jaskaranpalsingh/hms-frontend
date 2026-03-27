@@ -174,8 +174,8 @@ const Login = () => {
               </div>
 
               <p className="text-center text-slate-400 text-sm font-semibold relative z-10">
-                Internal Staff Only? {' '}
-                <NavLink to="/register" className="text-primary-600 font-bold hover:text-primary-700 hover:underline">Create ID</NavLink>
+                New Patient? {' '}
+                <NavLink to="/register" className="text-primary-600 font-bold hover:text-primary-700 hover:underline">Create Account</NavLink>
               </p>
 
             </>

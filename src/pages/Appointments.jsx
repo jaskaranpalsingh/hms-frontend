@@ -11,11 +11,13 @@ import AddVitalsModal from '../components/AddVitalsModal';
 import AddDetailModal from '../components/AddDetailModal';
 import QuickAppointmentModal from '../components/QuickAppointmentModal';
 import ConfirmModal from '../components/ConfirmModal';
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 const Appointments = () => {
   const { user } = useAuth();
+  const { can } = useRBAC();  // ← RBAC
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -208,7 +210,8 @@ const Appointments = () => {
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex items-center justify-end gap-2 transition-all">
-                          {user?.role !== 'patient' && (
+                          {/* RBAC: Vitals & Details — only if user can update */}
+                          {can('update') && (
                             <>
                               <button 
                                 onClick={() => {
@@ -240,7 +243,8 @@ const Appointments = () => {
                           >
                              <Edit className="w-4 h-4" />
                           </button>
-                          {user?.role === 'admin' && (
+                          {/* RBAC: Only admin can delete appointments */}
+                          {can('delete') && (
                             <button 
                               onClick={() => handleDelete(app._id)}
                               className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5 active:scale-95"

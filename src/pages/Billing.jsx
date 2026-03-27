@@ -10,9 +10,12 @@ import { billingService } from '../services/api';
 import AddInvoiceModal from '../components/AddInvoiceModal';
 import ViewInvoiceModal from '../components/ViewInvoiceModal';
 import ConfirmModal from '../components/ConfirmModal';
+import Can from '../components/Can';  // ← RBAC
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import toast from 'react-hot-toast';
 
 const Billing = () => {
+  const { can } = useRBAC();  // ← RBAC
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -76,18 +79,21 @@ const Billing = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-             Billing Ledger
-             <span className="text-xs font-semibold bg-primary-100 text-primary-700 px-3 py-1 rounded-full uppercase tracking-widest">{invoices.length || 0} Transactions</span>
+             Billing & Payments
+             <span className="text-xs font-semibold bg-primary-100 text-primary-700 px-3 py-1 rounded-full uppercase tracking-widest">{invoices.length || 0} Total Invoices</span>
           </h1>
-          <p className="text-slate-500 font-medium tracking-tight">Manage patient invoices, insurance claims, and hospital revenue tracking.</p>
+          <p className="text-slate-500 font-medium tracking-tight">View and manage all patient bills, payments, and hospital earnings.</p>
         </div>
-        <button 
-          onClick={() => setIsAddOpen(true)}
-          className="btn-primary flex items-center justify-center gap-2 group shadow-xl shadow-primary-600/20 px-8 py-3.5"
-        >
-          <FileText className="w-5 h-5 group-hover:rotate-6 transition-transform" />
-          Generate Invoice
-        </button>
+        {/* RBAC: Only admin can generate invoices */}
+        <Can action="create">
+          <button 
+            onClick={() => setIsAddOpen(true)}
+            className="btn-primary flex items-center justify-center gap-2 group shadow-xl shadow-primary-600/20 px-8 py-3.5"
+          >
+            <FileText className="w-5 h-5 group-hover:rotate-6 transition-transform" />
+            Generate Invoice
+          </button>
+        </Can>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -167,8 +173,8 @@ const Billing = () => {
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-700 tracking-tight">${inv.finalAmount?.toLocaleString()}</span>
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Tax: ${inv.tax || 0}</span>
+                          <span className="text-sm font-bold text-slate-700 tracking-tight">₹{inv.finalAmount?.toLocaleString()}</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Tax: ₹{inv.tax || 0}</span>
                        </div>
                     </td>
                     <td className="px-8 py-6">
@@ -196,12 +202,15 @@ const Billing = () => {
                           >
                              <Download className="w-4 h-4" />
                           </button>
+                          {/* RBAC: Only admin can delete invoices */}
+                          {can('delete') && (
                           <button 
                             onClick={() => handleDelete(inv._id)}
                             className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5"
                           >
                              <Trash2 className="w-4 h-4" />
                           </button>
+                          )}
                        </div>
                     </td>
                   </tr>
@@ -216,12 +225,15 @@ const Billing = () => {
                          <h3 className="text-xl font-bold text-slate-800 tracking-tight">No Financial Records Found</h3>
                          <p className="text-slate-400 font-medium">Clear search filters or generate a new patient invoice ledger.</p>
                       </div>
+                      {/* RBAC: Only admin can create invoices */}
+                      <Can action="create">
                       <button 
                         onClick={() => setIsAddOpen(true)}
                         className="btn-primary mt-4 scale-90 opacity-80 hover:scale-100 hover:opacity-100 uppercase tracking-widest text-[10px] py-4 px-10 shadow-lg"
                       >
                          Create Manual Ledger
                       </button>
+                      </Can>
                    </td>
                 </tr>
               )}

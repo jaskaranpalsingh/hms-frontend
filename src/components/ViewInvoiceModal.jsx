@@ -255,8 +255,8 @@ const ViewInvoiceModal = ({ isOpen, onClose, invoiceId }) => {
                              <tr key={i} className="text-[12px] text-slate-700">
                                 <td className="px-4 py-6 font-medium capitalize">{item.description}</td>
                                 <td className="px-4 py-6 text-center text-slate-500">{item.quantity}</td>
-                                <td className="px-4 py-6 text-right">${item.amount?.toLocaleString()}</td>
-                                <td className="px-4 py-6 text-right font-bold text-slate-900">${(item.amount * item.quantity).toLocaleString()}</td>
+                                <td className="px-4 py-6 text-right">₹{item.amount?.toLocaleString()}</td>
+                                <td className="px-4 py-6 text-right font-bold text-slate-900">₹{(item.amount * item.quantity).toLocaleString()}</td>
                              </tr>
                            ))}
                         </tbody>
@@ -288,21 +288,21 @@ const ViewInvoiceModal = ({ isOpen, onClose, invoiceId }) => {
                      <div className="w-72 space-y-3 font-medium text-xs">
                         <div className="flex justify-between px-2 text-slate-500 uppercase tracking-tight">
                            <span>Base Subtotal</span>
-                           <span className="text-slate-900 font-bold">${invoice?.totalAmount?.toLocaleString()}</span>
+                           <span className="text-slate-900 font-bold">₹{invoice?.totalAmount?.toLocaleString()}</span>
                         </div>
                         <div className="flex justify-between px-2 text-slate-500 uppercase tracking-tight">
                            <span>Tax Assessment ({invoice?.tax}%)</span>
-                           <span className="text-slate-900 font-bold">+${((invoice?.totalAmount * invoice?.tax) / 100).toLocaleString()}</span>
+                           <span className="text-slate-900 font-bold">+₹{((invoice?.totalAmount * invoice?.tax) / 100).toLocaleString()}</span>
                         </div>
                         {invoice?.discount > 0 && (
                           <div className="flex justify-between px-2 text-red-600 uppercase tracking-tight">
                              <span>Discount</span>
-                             <span className="font-bold">-${invoice?.discount?.toLocaleString()}</span>
+                             <span className="font-bold">-₹{invoice?.discount?.toLocaleString()}</span>
                           </div>
                         )}
                         <div className="flex justify-between px-6 py-4 bg-slate-800 text-white rounded-lg mt-6 shadow-sm shadow-slate-900/10" style={{ backgroundColor: '#1e293b' }}>
                            <span className="uppercase text-[10px] tracking-widest font-black">Final Total</span>
-                           <span className="text-xl font-bold">${invoice?.finalAmount?.toLocaleString()}</span>
+                           <span className="text-xl font-bold">₹{invoice?.finalAmount?.toLocaleString()}</span>
                         </div>
                      </div>
                   </div>

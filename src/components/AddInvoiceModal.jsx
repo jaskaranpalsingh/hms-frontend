@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, FileText, User, CreditCard, DollarSign, Calculator, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { X, Plus, Trash2, FileText, User, CreditCard, IndianRupee, Calculator, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { billingService, patientService } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -156,7 +156,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onRefresh }) => {
                         />
                      </div>
                      <div className="w-32 relative">
-                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
                         <input 
                           type="number"
                           placeholder="Amt"
@@ -218,7 +218,7 @@ const AddInvoiceModal = ({ isOpen, onClose, onRefresh }) => {
                       />
                    </div>
                    <div className="space-y-1">
-                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Discount ($)</label>
+                      <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Discount (₹)</label>
                       <input 
                         type="number"
                         value={formData.discount}
@@ -235,13 +235,13 @@ const AddInvoiceModal = ({ isOpen, onClose, onRefresh }) => {
                 </div>
                 <p className="text-[10px] font-black text-primary-400 uppercase tracking-[0.2em] mb-2">Final Summary</p>
                 <div className="flex items-baseline gap-2">
-                   <span className="text-sm font-bold opacity-60">$</span>
+                   <span className="text-sm font-bold opacity-60">₹</span>
                    <span className="text-4xl font-black tracking-tight">{calculateTotal().toLocaleString()}</span>
                 </div>
                 <div className="mt-4 pt-4 border-t border-white/10 space-y-1">
                    <div className="flex items-center justify-between text-[10px] font-bold uppercase opacity-60">
                       <span>Base Total</span>
-                      <span>${formData.items.reduce((acc, item) => acc + (item.amount * item.quantity), 0).toLocaleString()}</span>
+                      <span>₹{formData.items.reduce((acc, item) => acc + (item.amount * item.quantity), 0).toLocaleString()}</span>
                    </div>
                    <div className="flex items-center justify-between text-[10px] font-bold uppercase opacity-60">
                       <span>Tax Multiplier</span>

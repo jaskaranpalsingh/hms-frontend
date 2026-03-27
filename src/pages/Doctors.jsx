@@ -8,6 +8,7 @@ import { doctorService } from '../services/api';
 import AddDoctorModal from '../components/AddDoctorModal';
 import QuickAppointmentModal from '../components/QuickAppointmentModal';
 import MessageModal from '../components/MessageModal';
+import Can from '../components/Can';  // ← RBAC
 import { useAuth } from '../context/AuthContext';
 
 const Doctors = () => {
@@ -48,7 +49,8 @@ const Doctors = () => {
           </h1>
           <p className="text-slate-500 font-medium">Manage hospital doctors, their specialties, and availability schedules.</p>
         </div>
-        {user?.role === 'admin' && (
+        {/* RBAC: Only admin can add doctors */}
+        <Can action="create">
           <button 
             onClick={() => setIsModalOpen(true)}
             className="btn-primary flex items-center justify-center gap-2 group shadow-lg shadow-primary-500/20"
@@ -56,7 +58,7 @@ const Doctors = () => {
             <UserPlus className="w-5 h-5 group-hover:rotate-12 transition-transform" />
             Add New Doctor
           </button>
-        )}
+        </Can>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 items-center">

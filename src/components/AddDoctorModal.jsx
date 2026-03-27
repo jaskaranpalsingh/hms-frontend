@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   X, ShieldCheck, RefreshCw, 
   User, Mail, Phone, 
-  Briefcase, GraduationCap, DollarSign 
+  Briefcase, GraduationCap, IndianRupee 
 } from 'lucide-react';
 import { doctorService } from '../services/api';
 import toast from 'react-hot-toast';
@@ -170,7 +170,7 @@ const AddDoctorModal = ({ isOpen, onClose, onRefresh, editDoctor }) => {
              </div>
 
              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Consultation Fee ($)</label>
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Consultation Fee (Rs.)</label>
                 <input 
                   type="number"
                   required

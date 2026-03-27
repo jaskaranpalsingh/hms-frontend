@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://hms-backend-pedp.onrender.com/api';
+const API_URL = 'http://localhost:9090/api';
 
 const api = axios.create({
   baseURL: API_URL,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, UserPlus, Briefcase, Mail, Phone, Calendar, Clock, DollarSign, CheckCircle2, RefreshCw } from 'lucide-react';
+import { X, UserPlus, Briefcase, Mail, Phone, Calendar, Clock, IndianRupee, CheckCircle2, RefreshCw } from 'lucide-react';
 import { staffService } from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -149,8 +149,15 @@ const AddStaffModal = ({ isOpen, onClose, onRefresh, editStaff }) => {
                 <input 
                   type="tel"
                   required
+                  maxLength="10"
+                  pattern="[0-9]{10}"
                   value={formData.contact.phone}
-                  onChange={(e) => setFormData({...formData, contact: { ...formData.contact, phone: e.target.value }})}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '');
+                    if (val.length <= 10) {
+                      setFormData({...formData, contact: { ...formData.contact, phone: val }});
+                    }
+                  }}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:border-primary-600 outline-none font-bold text-slate-800 transition-all text-sm"
                   placeholder="e.g. 9876543210"
                 />
@@ -173,9 +180,9 @@ const AddStaffModal = ({ isOpen, onClose, onRefresh, editStaff }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Monthly Salary ($)</label>
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2">Monthly Salary (₹)</label>
               <div className="relative group">
-                <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
+                <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-green-500" />
                 <input 
                   type="number"
                   required

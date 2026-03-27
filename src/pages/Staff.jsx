@@ -8,9 +8,12 @@ import {
 } from 'lucide-react';
 import { staffService } from '../services/api';
 import AddStaffModal from '../components/AddStaffModal';
+import Can from '../components/Can';  // ← RBAC
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import toast from 'react-hot-toast';
 
 const Staff = () => {
+  const { can } = useRBAC();  // ← RBAC
   const [loading, setLoading] = useState(true);
   const [staff, setStaff] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -73,16 +76,19 @@ const Staff = () => {
           </h1>
           <p className="text-slate-500 font-medium tracking-tight">Manage hospital personnel, roles, and administrative accessibility.</p>
         </div>
-        <button 
-          onClick={() => {
-            setEditingStaff(null);
-            setIsModalOpen(true);
-          }}
-          className="btn-primary flex items-center justify-center gap-2 group shadow-xl shadow-primary-600/20"
-        >
-          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-          Onboard Staff
-        </button>
+        {/* RBAC: Only admin/manager can onboard staff */}
+        <Can action="create">
+          <button 
+            onClick={() => {
+              setEditingStaff(null);
+              setIsModalOpen(true);
+            }}
+            className="btn-primary flex items-center justify-center gap-2 group shadow-xl shadow-primary-600/20"
+          >
+            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+            Onboard Staff
+          </button>
+        </Can>
       </div>
 
       <div className="flex flex-col md:flex-row gap-4 items-center">
@@ -153,7 +159,7 @@ const Staff = () => {
                              <span className="text-sm font-bold text-slate-700">{person.role}</span>
                              <div className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded ${getStatusStyle(person.status)}`}>{person.status}</div>
                           </div>
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">${person.salary}/mo</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">₹{person.salary}/mo</span>
                        </div>
                     </td>
                     <td className="px-8 py-6">
@@ -179,21 +185,27 @@ const Staff = () => {
                     </td>
                     <td className="px-8 py-6">
                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100">
-                          <button 
-                            onClick={() => {
-                              setEditingStaff(person);
-                              setIsModalOpen(true);
-                            }}
-                            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-primary-600 hover:border-primary-200 rounded-xl shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5"
-                          >
-                             <Edit className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => handleDelete(person._id)}
-                            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5"
-                          >
-                             <Trash2 className="w-4 h-4" />
-                          </button>
+                          {/* RBAC: Only users with update permission can edit staff */}
+                          {can('update') && (
+                            <button 
+                              onClick={() => {
+                                setEditingStaff(person);
+                                setIsModalOpen(true);
+                              }}
+                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-primary-600 hover:border-primary-200 rounded-xl shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5"
+                            >
+                               <Edit className="w-4 h-4" />
+                            </button>
+                          )}
+                          {/* RBAC: Only users with delete permission can remove staff */}
+                          {can('delete') && (
+                            <button 
+                              onClick={() => handleDelete(person._id)}
+                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl shadow-sm hover:shadow transition-all transform hover:-translate-y-0.5"
+                            >
+                               <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                        </div>
                     </td>
                   </tr>

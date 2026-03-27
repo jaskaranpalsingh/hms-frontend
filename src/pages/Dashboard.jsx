@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import { analyticsService } from '../services/api';
 import QuickAppointmentModal from '../components/QuickAppointmentModal';
+import DetailedAnalyticsModal from '../components/DetailedAnalyticsModal';
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
+import Can from '../components/Can';  // ← RBAC
 
 const StatCard = ({ title, value, icon, change, isPositive, loading }) => (
   <div className="card group hover:bg-primary-600 transition-all duration-300">
@@ -34,9 +37,11 @@ const StatCard = ({ title, value, icon, change, isPositive, loading }) => (
 );
 
 const Dashboard = () => {
+  const { isAdmin, role } = useRBAC();  // ← RBAC
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
 
   const fetchStats = async () => {
     try {
@@ -66,13 +71,16 @@ const Dashboard = () => {
           </h1>
           <p className="text-slate-500 font-medium">Welcome back, here's what's happening at Saini's Hospital today.</p>
         </div>
-        <button 
-          onClick={() => setIsModalOpen(true)}
-          className="btn-primary flex items-center gap-2 group shadow-lg shadow-primary-500/20"
-        >
-          <Calendar className="w-4 h-4 group-hover:rotate-12 transition-transform" />
-          Quick Appointment
-        </button>
+        {/* RBAC: Only clinical personnel/admin can quick book */}
+        {role !== 'patient' && (
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="btn-primary flex items-center gap-2 group shadow-lg shadow-primary-500/20"
+          >
+            <Calendar className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+            Quick Appointment
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-0.5">
@@ -100,14 +108,17 @@ const Dashboard = () => {
           isPositive={false}
           loading={loading}
         />
-        <StatCard 
-          title="Total Revenue" 
-          value={`$${stats.totalRevenue?.toLocaleString() || '0'}`} 
-          icon={<TrendingUp className="w-6 h-6 text-primary-600 group-hover:text-white" />} 
-          change="14.8" 
-          isPositive={true}
-          loading={loading}
-        />
+        {/* RBAC: Revenue stats only for Admin */}
+        {isAdmin && (
+          <StatCard 
+            title="Total Revenue" 
+            value={`₹${stats.totalRevenue?.toLocaleString() || '0'}`} 
+            icon={<TrendingUp className="w-6 h-6 text-primary-600 group-hover:text-white" />} 
+            change="14.8" 
+            isPositive={true}
+            loading={loading}
+          />
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -203,12 +214,18 @@ const Dashboard = () => {
               );
             })}
           </div>
-          <div className="pt-4 border-t border-slate-50">
-            <button className="w-full flex items-center justify-between text-sm font-bold text-primary-600 hover:text-primary-700 group">
-              View Detailed Analytics
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
+          {/* RBAC: Detailed analytics only for Admin */}
+          {isAdmin && (
+            <div className="pt-4 border-t border-slate-50">
+              <button 
+                onClick={() => setIsAnalyticsOpen(true)}
+                className="w-full flex items-center justify-between text-sm font-bold text-primary-600 hover:text-primary-700 group transition-all"
+              >
+                View Detailed Analytics
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -216,6 +233,12 @@ const Dashboard = () => {
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
         onRefresh={fetchStats}
+      />
+
+      <DetailedAnalyticsModal 
+        isOpen={isAnalyticsOpen}
+        onClose={() => setIsAnalyticsOpen(false)}
+        data={data}
       />
     </div>
   );

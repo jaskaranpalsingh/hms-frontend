@@ -10,9 +10,12 @@ import AddPatientModal from '../components/AddPatientModal';
 import ViewPatientModal from '../components/ViewPatientModal';
 import MessagePatientModal from '../components/MessagePatientModal';
 import ConfirmModal from '../components/ConfirmModal';
+import Can from '../components/Can';  // ← RBAC permission gate
+import useRBAC from '../hooks/useRBAC';  // ← RBAC hook
 import toast from 'react-hot-toast';
 
 const Patients = () => {
+  const { can } = useRBAC();  // ← RBAC: check current user's permissions
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -94,6 +97,8 @@ const Patients = () => {
              <Download className="w-5 h-5" />
              Export CSV
            </button>
+           {/* RBAC: Only show Register button if user can create */}
+           <Can action="create">
            <button 
              onClick={() => {
                setSelectedPatient(null);
@@ -104,6 +109,7 @@ const Patients = () => {
              <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
              Register Patient
            </button>
+           </Can>
         </div>
       </div> {/* Close Header (2) */}
 
@@ -209,22 +215,28 @@ const Patients = () => {
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                         </button>
-                        <button 
-                          onClick={() => {
-                            setSelectedPatient(patient);
-                            setIsAddOpen(true);
-                          }}
-                          className="p-3 bg-white border-2 border-slate-100 text-slate-400 hover:text-green-600 hover:border-green-100 rounded-2xl shadow-sm hover:shadow-xl transition-all active:scale-90"
-                          title="Edit Patient"
-                        >
-                          <Edit className="w-5 h-5" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(patient._id, patient.name)}
-                          className="p-3 bg-white border-2 border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-2xl shadow-sm hover:shadow-xl transition-all active:scale-90"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                        {/* RBAC: Only show Edit button if user can update */}
+                        {can('update') && (
+                          <button 
+                            onClick={() => {
+                              setSelectedPatient(patient);
+                              setIsAddOpen(true);
+                            }}
+                            className="p-3 bg-white border-2 border-slate-100 text-slate-400 hover:text-green-600 hover:border-green-100 rounded-2xl shadow-sm hover:shadow-xl transition-all active:scale-90"
+                            title="Edit Patient"
+                          >
+                            <Edit className="w-5 h-5" />
+                          </button>
+                        )}
+                        {/* RBAC: Only show Delete button if user can delete (admin only) */}
+                        {can('delete') && (
+                          <button 
+                            onClick={() => handleDelete(patient._id, patient.name)}
+                            className="p-3 bg-white border-2 border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-2xl shadow-sm hover:shadow-xl transition-all active:scale-90"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        )}
                         <button className="p-3 bg-white border-2 border-slate-100 text-slate-400 hover:bg-slate-50 rounded-2xl shadow-sm transition-all active:scale-90">
                            <MoreVertical className="w-5 h-5" />
                         </button>

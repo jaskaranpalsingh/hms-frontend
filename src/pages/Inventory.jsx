@@ -6,9 +6,12 @@ import {
   Edit, Trash2
 } from 'lucide-react';
 import { inventoryService } from '../services/api';
+import Can from '../components/Can';  // ← RBAC
+import useRBAC from '../hooks/useRBAC';  // ← RBAC
 import toast from 'react-hot-toast';
 
 const Inventory = () => {
+  const { can } = useRBAC();  // ← RBAC
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState([]);
   const [stats, setStats] = useState({
@@ -182,12 +185,15 @@ const Inventory = () => {
            >
               <RefreshCw className="w-5 h-5" />
            </button>
+           {/* RBAC: Only admin can add new supply items */}
+           <Can action="create">
            <button 
              onClick={() => { resetForm(); setIsModalOpen(true); }}
              className="flex items-center gap-3 bg-slate-900 hover:bg-slate-800 text-white font-black px-8 py-4 rounded-2xl transition-all uppercase tracking-widest text-[11px] shadow-2xl shadow-slate-900/20 active:scale-95 group"
            >
               <Plus className="w-5 h-5 transition-transform group-hover:rotate-90" /> New Supply Entry
            </button>
+           </Can>
         </div>
       </div>
 
@@ -364,10 +370,10 @@ const Inventory = () => {
                       </td>
                       <td className="px-4 py-6 text-right">
                          <div className="font-black text-slate-900 tracking-tighter text-base">
-                            ${(item.unitPrice * item.quantityInStock).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            Rs. {(item.unitPrice * item.quantityInStock).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                          </div>
                          <div className="text-[10px] font-bold text-slate-400 mt-0.5">
-                            ${item.unitPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / unit
+                            Rs. {item.unitPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} / unit
                          </div>
                       </td>
                       <td className="px-8 py-6 text-right relative action-dropdown-container">
@@ -379,12 +385,18 @@ const Inventory = () => {
                         </button>
                         {openDropdownId === item._id && (
                           <div className="absolute right-12 top-10 z-[100] w-40 bg-white rounded-xl shadow-2xl border border-slate-100 overflow-hidden py-1 animate-in zoom-in-95">
+                             {/* RBAC: Only show Edit if user can update */}
+                             {can('update') && (
                              <button onClick={() => handleEditClick(item)} className="w-full px-4 py-2 text-left text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
                                 <Edit className="w-3.5 h-3.5" /> Edit Record
                              </button>
+                             )}
+                             {/* RBAC: Only show Delete if user can delete (admin only) */}
+                             {can('delete') && (
                              <button onClick={() => handleDeleteClick(item._id)} className="w-full px-4 py-2 text-left text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2">
                                 <Trash2 className="w-3.5 h-3.5" /> Remove Asset
                              </button>
+                             )}
                           </div>
                         )}
                       </td>
@@ -494,7 +506,7 @@ const Inventory = () => {
                      />
                   </div>
                   <div className="space-y-3">
-                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Unit Valuation ($)</label>
+                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Unit Valuation (Rs.)</label>
                      <input 
                        required
                        type="number" 
