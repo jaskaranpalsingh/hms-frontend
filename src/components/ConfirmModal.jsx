@@ -33,36 +33,37 @@ const ConfirmModal = ({ isOpen, onClose, onConfirm, title, message, type = 'dang
   const styles = getTypeStyles();
 
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className={`bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl border-2 ${styles.border} overflow-hidden animate-in zoom-in-95 duration-300`}>
-        <div className="p-8 space-y-6">
-          <div className="flex flex-col items-center text-center space-y-4">
-            <div className={`w-20 h-20 ${styles.iconBg} rounded-[2rem] flex items-center justify-center shadow-lg border-4 border-white`}>
-              {styles.icon}
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
+      <div className={`bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl border border-white/20 overflow-hidden animate-in zoom-in-95 duration-300`}>
+        <div className="p-10 space-y-8">
+          <div className="flex flex-col items-center text-center space-y-5">
+            <div className={`w-24 h-24 ${styles.iconBg} rounded-[2rem] flex items-center justify-center shadow-inner border border-white/40 ring-1 ring-slate-100/50`}>
+              {React.cloneElement(styles.icon, { className: 'w-10 h-10' })}
             </div>
             <div className="space-y-3">
-              <h3 className="text-2xl font-black text-slate-900 uppercase tracking-tight leading-none">{title}</h3>
-              <p className="text-sm text-slate-600 font-bold leading-relaxed px-2">
+              <h3 className="text-2xl font-bold text-slate-900 tracking-tight leading-none px-2">{title}</h3>
+              <p className="text-sm text-slate-500 font-medium leading-relaxed px-4">
                 {message}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-col gap-4 mt-8">
+          <div className="flex flex-col gap-4">
             <button
               onClick={() => {
                 onConfirm();
                 onClose();
               }}
-              className={`w-full ${styles.btn} text-white font-black py-5 rounded-2xl shadow-xl transition-all active:scale-95 uppercase tracking-[0.2em] text-[11px]`}
+              className={`w-full ${styles.btn} text-white font-bold py-5 rounded-[2rem] shadow-xl transition-all active:scale-[0.98] uppercase tracking-widest text-xs relative overflow-hidden group`}
             >
-              {confirmText}
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="relative z-10">{confirmText}</span>
             </button>
             <button
               onClick={onClose}
-              className="w-full bg-slate-100/50 hover:bg-slate-200/50 text-slate-500 font-black py-4 rounded-2xl transition-all uppercase tracking-[0.1em] text-[10px]"
+              className="w-full bg-slate-50 hover:bg-slate-100 text-slate-400 hover:text-slate-600 font-bold py-4 rounded-[1.5rem] transition-all uppercase tracking-[0.15em] text-[10px] active:scale-[0.98]"
             >
-              Cancel & Return
+              Revert & Exit
             </button>
           </div>
         </div>

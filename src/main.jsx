@@ -12,17 +12,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <SocketProvider>
         <App />
         <Toaster 
-          position="top-right"
+          position="bottom-right"
           toastOptions={{
             duration: 4000,
             style: {
-               borderRadius: '16px',
-               background: '#fff',
-               color: '#1e293b',
-               border: '1px solid #f1f5f9',
-               padding: '16px 24px',
-               fontWeight: '600',
-               boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+               borderRadius: '24px',
+               background: '#ffffff',
+               color: '#0f172a',
+               border: '1px solid rgba(241, 245, 249, 0.8)',
+               padding: '16px 28px',
+               fontSize: '14px',
+               fontWeight: '700',
+               boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05)',
             },
           }}
         />

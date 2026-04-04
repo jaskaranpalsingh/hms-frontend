@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
-import { messageService } from '../services/api';
+import { messageService, notificationService } from '../services/api';
 
 const SocketContext = createContext();
 
@@ -11,14 +11,27 @@ export const SocketProvider = ({ children }) => {
     const { user } = useAuth();
     const [socket, setSocket] = useState(null);
     const [unreadMessages, setUnreadMessages] = useState({});
+    const [notifications, setNotifications] = useState([]);
 
     useEffect(() => {
         if (user) {
+            const userId = user._id || user.id;
+            
+            // Fetch initial notifications
+            const fetchNotifications = async () => {
+                try {
+                    const res = await notificationService.getNotifications(userId);
+                    setNotifications(res.data.data);
+                } catch (err) {
+                    console.error('Failed to fetch notifications:', err);
+                }
+            };
+            fetchNotifications();
+
             const newSocket = io('http://localhost:9090');
             setSocket(newSocket);
             
             newSocket.on('connect', () => {
-                const userId = user._id || user.id;
                 newSocket.emit('join', userId);
             });
 
@@ -34,12 +47,15 @@ export const SocketProvider = ({ children }) => {
 
                 console.log('📬 Socket received message from:', senderId);
                 
-                // If we are not on the messages page or not in the specific conversation,
-                // we should increment the unread count for that sender
                 setUnreadMessages(prev => ({
                     ...prev,
                     [senderId]: (prev[senderId] || 0) + 1
                 }));
+            });
+
+            newSocket.on('new_notification', (notification) => {
+                console.log('🔔 Socket received notification:', notification);
+                setNotifications(prev => [notification, ...prev]);
             });
 
             return () => newSocket.close();
@@ -64,8 +80,37 @@ export const SocketProvider = ({ children }) => {
         }
     };
 
+    const markNotificationAsRead = async (id) => {
+        try {
+            await notificationService.markAsRead(id);
+            setNotifications(prev => 
+                prev.map(n => n._id === id ? { ...n, isRead: true } : n)
+            );
+        } catch (err) {
+            console.error('Failed to mark notification as read:', err);
+        }
+    };
+
+    const markAllNotificationsAsRead = async () => {
+        if (!user) return;
+        const userId = user._id || user.id;
+        try {
+            await notificationService.markAllAsRead(userId);
+            setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
+        } catch (err) {
+            console.error('Failed to mark all notifications as read:', err);
+        }
+    };
+
     return (
-        <SocketContext.Provider value={{ socket, unreadMessages, clearUnread }}>
+        <SocketContext.Provider value={{ 
+            socket, 
+            unreadMessages, 
+            clearUnread, 
+            notifications, 
+            markNotificationAsRead,
+            markAllNotificationsAsRead
+        }}>
             {children}
         </SocketContext.Provider>
     );

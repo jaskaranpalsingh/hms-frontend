@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, User, Activity, FileText, Calendar, Clock, Thermometer, Droplets, Scale, ArrowUpCircle, ExternalLink, RefreshCw } from 'lucide-react';
+import { X, User, Activity, FileText, Calendar, Clock, Thermometer, Droplets, Scale, ArrowUpCircle, ExternalLink, RefreshCw, Info } from 'lucide-react';
 import { patientService, recordService } from '../services/api';
 import toast from 'react-hot-toast';
 

@@ -88,42 +88,46 @@ const Appointments = () => {
   };
 
   return (
-    <div className="space-y-8 animate-in slide-in-from-top-4 duration-500 pb-12">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="space-y-1">
+    <div className="space-y-10 animate-in slide-in-from-top-4 duration-500 pb-12">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1.5">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 flex items-center gap-3">
-             Appointments Manager
-             <span className="text-xs font-semibold bg-primary-100 text-primary-700 px-3 py-1 rounded-full uppercase tracking-widest">{appointments.length || 0} Scheduled</span>
+             Appointment Schedule
+             <span className="text-xs font-bold bg-primary-50 text-primary-700 px-3 py-1 rounded-full border border-primary-100 uppercase tracking-widest shadow-sm">{appointments.length || 0} Scheduled</span>
           </h1>
-          <p className="text-slate-500 font-medium tracking-tight">Manage and reschedule hospital appointments with real-time slot tracking.</p>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <p className="text-xs text-slate-500 font-medium">Real-time Clinical Synchronization Active</p>
+          </div>
         </div>
         <button 
           onClick={() => setIsQuickOpen(true)}
-          className="btn-primary flex items-center justify-center gap-2 group shadow-xl shadow-primary-600/20"
+          className="group bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-7 rounded-2xl shadow-xl shadow-slate-200 active:scale-95 transition-all flex items-center justify-center gap-2.5 relative overflow-hidden"
         >
-          <Calendar className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-          Book Visit
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <Calendar className="w-5 h-5 relative z-10 transition-transform group-hover:rotate-12 duration-300" />
+          <span className="relative z-10 tracking-tight">New Appointment</span>
         </button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 items-center">
-        <div className="relative w-full md:max-w-md">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 focus:text-primary-600 transition-colors" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 relative group">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-primary-500 transition-colors pointer-events-none" />
           <input 
             type="text" 
-            placeholder="Search patient, doctor or reason..." 
+            placeholder="Search appointments by name, doctor or ID..." 
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-semibold focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 transition-all outline-none shadow-sm"
+            className="w-full pl-14 pr-6 py-4.5 bg-white border border-slate-200 rounded-[1.5rem] text-sm font-semibold focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all outline-none shadow-sm placeholder:text-slate-400"
           />
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <Filter className="w-5 h-5 text-slate-400 hidden md:block" />
+        <div className="relative group">
+          <Filter className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5 group-focus-within:text-primary-500 transition-colors pointer-events-none z-20" />
           <select 
              value={statusFilter}
              onChange={(e) => setStatusFilter(e.target.value)}
-             className="w-full md:w-48 px-6 py-4 bg-white border border-slate-200 rounded-2xl text-sm font-bold text-slate-600 focus:ring-4 focus:ring-primary-600/10 focus:border-primary-600 transition-all outline-none shadow-sm appearance-none cursor-pointer"
+             className="w-full md:w-full pl-14 pr-6 py-4.5 bg-white border border-slate-200 rounded-[1.5rem] text-sm font-bold text-slate-600 focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 transition-all outline-none shadow-sm appearance-none cursor-pointer relative z-10"
           >
             <option value="">All Statuses</option>
             <option value="Confirmed">Confirmed</option>
@@ -138,16 +142,16 @@ const Appointments = () => {
         <div className="overflow-x-auto min-w-[1000px]">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] bg-slate-50 border-b border-slate-100">
-                <th className="px-8 py-6">ID & Patient Details</th>
-                <th className="px-8 py-6">Medical Personnel</th>
-                <th className="px-8 py-6">Appt Date / Time</th>
-                <th className="px-8 py-6">Visit Reason / Type</th>
+              <tr className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-50">
+                <th className="px-8 py-6">Patient Profile</th>
+                <th className="px-8 py-6">Doctor / Specialist</th>
+                <th className="px-8 py-6">Date & Time</th>
+                <th className="px-8 py-6">Purpose of Visit</th>
                 <th className="px-8 py-6">Current Status</th>
                 <th className="px-8 py-6 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50/50">
               {loading ? (
                 [1,2,3,4,5].map(i => (
                   <tr key={i}>
@@ -157,23 +161,23 @@ const Appointments = () => {
               ) : appointments.length > 0 ? (
                 appointments.map((app) => (
                   <tr key={app._id} className="group hover:bg-slate-50/50 transition-all duration-300">
-                    <td className="px-8 py-6">
+                    <td className="px-8 py-5">
                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-[10px] uppercase border-2 border-white shadow-sm ring-1 ring-slate-100 group-hover:bg-primary-600 group-hover:text-white transition-all">
+                          <div className="w-11 h-11 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-700 font-bold shadow-inner ring-1 ring-primary-100 transition-transform group-hover:scale-105">
                              {app.patientId?.name?.charAt(0)}
                           </div>
                           <div className="flex flex-col">
                              <div className="flex items-center gap-2">
-                                <span className="text-sm font-bold text-slate-900 truncate uppercase group-hover:text-primary-600 transition-colors">{app.patientId?.name}</span>
-                                <span className="text-[10px] font-bold bg-slate-100 text-slate-400 px-1.5 py-0.5 rounded uppercase">#{app.id}</span>
+                                <span className="text-sm font-bold text-slate-800 tracking-tight group-hover:text-primary-600 transition-colors uppercase">{app.patientId?.name}</span>
+                                <span className="text-[10px] font-bold text-slate-400">ID #{app.id}</span>
                              </div>
-                             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1 pl-0.5">{app.patientId?.patientId}</span>
+                             <span className="text-[10px] text-slate-400 font-semibold tracking-widest">{app.patientId?.patientId}</span>
                           </div>
                        </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-8 py-5">
                       <div className="flex items-center gap-3">
-                         <div className="p-2 bg-primary-100/50 rounded-lg text-primary-600">
+                         <div className="w-9 h-9 bg-primary-50 rounded-xl flex items-center justify-center text-primary-600 border border-primary-100">
                             <Stethoscope className="w-4 h-4" />
                          </div>
                          <div className="flex flex-col">
@@ -182,35 +186,31 @@ const Appointments = () => {
                          </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-sm font-bold text-slate-700">
+                    <td className="px-8 py-5">
                        <div className="flex flex-col">
-                          <span className="flex items-center gap-1.5 text-primary-600">
+                          <span className="text-xs font-bold text-primary-600 flex items-center gap-1.5 uppercase">
                              <Calendar className="w-3 h-3" />
-                             {new Date(app.date).toLocaleDateString()}
+                             {new Date(app.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
-                          <span className="flex items-center gap-1.5 text-slate-400 mt-1 pl-4">
-                             <Clock className="w-3 h-3 text-slate-300" />
+                          <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1.5 mt-1 tracking-widest pl-4 uppercase">
+                             <Clock className="w-3 h-3" />
                              {app.timeSlot}
                           </span>
                        </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-8 py-5">
                        <div className="flex flex-col">
                           <span className="text-sm font-bold text-slate-700 capitalize group-hover:text-primary-600 transition-all">{app.reason}</span>
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">{app.type}</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 bg-slate-50 px-2 py-0.5 rounded w-max border border-slate-100">{app.type}</span>
                        </div>
                     </td>
-                    <td className="px-8 py-6">
-                       <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg flex items-center gap-1.5 w-max ${getStatusStyle(app.status)} shadow-sm border border-transparent hover:border-white shadow-slate-200/50 transition-all`}>
-                          {app.status === 'Confirmed' && <CheckCircle2 className="w-3 h-3" />}
-                          {app.status === 'Scheduled' && <Clock className="w-3 h-3" />}
-                          {app.status === 'Cancelled' && <XCircle className="w-3 h-3" />}
+                    <td className="px-8 py-5">
+                       <span className={`text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl border transition-all ${getStatusStyle(app.status)}`}>
                           {app.status}
                        </span>
                     </td>
-                    <td className="px-8 py-6">
-                       <div className="flex items-center justify-end gap-2 transition-all">
-                          {/* RBAC: Vitals & Details — only if user can update */}
+                    <td className="px-8 py-5">
+                       <div className="flex items-center justify-end gap-2.5 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
                           {can('update') && (
                             <>
                               <button 
@@ -218,7 +218,7 @@ const Appointments = () => {
                                   setSelectedAppointment(app);
                                   setIsVitalsOpen(true);
                                 }}
-                                className="p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-primary-600 hover:border-primary-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5 active:scale-95"
+                                className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-primary-600 hover:border-primary-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
                                 title="Add Vitals"
                               >
                                  <Activity className="w-4 h-4" />
@@ -228,8 +228,8 @@ const Appointments = () => {
                                   setSelectedAppointment(app);
                                   setIsDetailOpen(true);
                                 }}
-                                className="p-2.5 bg-white border border-slate-200 text-slate-500 hover:text-indigo-600 hover:border-indigo-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5 active:scale-95"
-                                title="Add Consultation Details"
+                                className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-indigo-600 hover:border-indigo-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
+                                title="Add Notes"
                               >
                                  <FileText className="w-4 h-4" />
                               </button>
@@ -238,17 +238,16 @@ const Appointments = () => {
                           )}
                           <button 
                             onClick={() => handleEdit(app)}
-                            className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-primary-600 hover:border-primary-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5 active:scale-95"
-                            title="Edit / Reschedule"
+                            className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-emerald-600 hover:border-emerald-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
+                            title="Reschedule"
                           >
                              <Edit className="w-4 h-4" />
                           </button>
-                          {/* RBAC: Only admin can delete appointments */}
                           {can('delete') && (
                             <button 
                               onClick={() => handleDelete(app._id)}
-                              className="p-2.5 bg-white border border-slate-200 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl shadow-sm hover:shadow transition-all group/btn transform hover:-translate-y-0.5 active:scale-95"
-                              title="Delete Slot"
+                              className="p-2.5 bg-white border border-slate-100 text-slate-400 hover:text-rose-600 hover:border-rose-100 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-95"
+                              title="Cancel Slot"
                             >
                                <Trash2 className="w-4 h-4" />
                             </button>
@@ -259,16 +258,19 @@ const Appointments = () => {
                 ))
               ) : (
                 <tr>
-                   <td colSpan="6" className="px-8 py-24 text-center space-y-4 bg-slate-50/20">
-                      <div className="w-20 h-20 bg-white border-2 border-dashed border-slate-200 rounded-full flex items-center justify-center mx-auto text-slate-200 animate-pulse">
+                   <td colSpan="6" className="px-8 py-24 text-center">
+                      <div className="w-24 h-24 bg-slate-50 rounded-[2.5rem] flex items-center justify-center mx-auto text-slate-300 border border-slate-100 mb-6">
                          <Calendar className="w-10 h-10" />
                       </div>
-                      <div className="space-y-1">
-                         <h3 className="text-xl font-bold text-slate-800 tracking-tight">No Appointments Planned</h3>
-                         <p className="text-slate-400 font-medium">Looks like your schedule is empty. Use the quick book feature to get started.</p>
+                      <div className="space-y-2">
+                         <h3 className="text-xl font-bold text-slate-900 tracking-tight">No Appointments Planned</h3>
+                         <p className="text-slate-400 font-medium text-sm max-w-sm mx-auto leading-relaxed">Looks like your schedule is empty. Use the quick book feature to create a new clinical entry.</p>
                       </div>
-                      <button className="btn-primary mt-4 scale-90 opacity-80 hover:scale-100 hover:opacity-100">
-                         Initial Appointment
+                      <button 
+                        onClick={() => setIsQuickOpen(true)}
+                        className="mt-6 text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-widest bg-primary-50 px-5 py-2.5 rounded-xl transition-all"
+                      >
+                         Schedule First Appointment
                       </button>
                    </td>
                 </tr>

@@ -35,84 +35,103 @@ const MessagePatientModal = ({ isOpen, onClose, patient }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border-2 border-slate-50 overflow-hidden animate-in zoom-in-95 duration-300">
-        <div className="bg-primary-600 px-8 py-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-             <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white backdrop-blur-md border border-white/20">
-                <Mail className="w-6 h-6" />
-             </div>
-             <div className="space-y-0.5">
-                <h2 className="text-lg font-black text-white uppercase tracking-tight">Patient Comms</h2>
-                <p className="text-[10px] text-primary-100 font-bold uppercase tracking-[0.2em]">Secure Patient Communication</p>
-             </div>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-300">
+      <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-white/20 overflow-hidden animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+        
+        {/* Header Section: Professional & Silkier */}
+        <div className="relative px-10 py-8 border-b border-slate-50 bg-gradient-to-br from-white to-slate-50/50 flex-shrink-0">
+          <div className="absolute top-0 right-0 p-6">
+            <button 
+              onClick={onClose} 
+              className="p-2 hover:bg-slate-100 rounded-2xl transition-all duration-200 text-slate-400 hover:text-slate-600 group"
+            >
+              <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
+            </button>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-colors text-white/50 hover:text-white">
-            <X className="w-6 h-6" />
-          </button>
-        </div>
-
-        <div className="p-8 space-y-6">
-          <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-             <div className="w-12 h-12 bg-primary-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary-500/20">
-                {patient.name?.charAt(0)}
+          
+          <div className="flex items-center gap-5">
+             <div className="w-14 h-14 bg-blue-50 rounded-[1.5rem] flex items-center justify-center text-blue-600 shadow-inner ring-1 ring-blue-100">
+                <Mail className="w-7 h-7" />
              </div>
-             <div className="flex flex-col">
-                <h3 className="text-sm font-black text-slate-800 uppercase tracking-tight">{patient.name}</h3>
-                <span className="text-[10px] font-bold text-primary-600 uppercase tracking-widest">ID: #{patient.patientId}</span>
-             </div>
-             <div className="ml-auto flex flex-col items-end gap-1">
-                <div className="flex items-center gap-1.5 text-[9px] font-black text-green-500 uppercase bg-green-50 px-2 py-1 rounded-md">
-                   <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                   Verified Patient
+             <div className="space-y-1">
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Clinical Communication</h2>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                  <p className="text-xs text-slate-500 font-medium tracking-tight">Encrypted Patient Link v4.2</p>
                 </div>
              </div>
           </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-             <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-2 flex items-center gap-2">
-                   <MessageSquare className="w-3 h-3 text-primary-500" />
-                   Clinical Dispatch Message
-                </label>
+        <div className="overflow-y-auto custom-scrollbar p-10 space-y-8">
+          {/* Patient Identification Card */}
+          <div className="flex items-center gap-5 p-6 bg-slate-50/50 rounded-[2rem] border border-slate-100 shadow-sm relative overflow-hidden group">
+             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                <ShieldCheck className="w-16 h-16" />
+             </div>
+             <div className="w-16 h-16 bg-white rounded-[1.25rem] flex items-center justify-center text-blue-600 font-bold text-2xl shadow-sm border border-slate-100 ring-1 ring-slate-100/50 relative z-10">
+                {patient.name?.charAt(0)}
+             </div>
+             <div className="flex flex-col relative z-10 space-y-1">
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight leading-none">{patient.name}</h3>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-[0.2em]">Ref: #{patient.patientId}</span>
+             </div>
+             <div className="ml-auto hidden sm:flex items-center gap-2 text-[9px] font-black text-emerald-600 uppercase bg-white px-3 py-1.5 rounded-xl border border-emerald-100 shadow-sm relative z-10">
+                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                Verified
+             </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-8">
+             <div className="space-y-4">
+                <div className="flex items-center justify-between px-1">
+                   <h3 className="text-sm font-bold text-slate-800">Personnel Dispatch</h3>
+                   <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                      <MessageSquare className="w-3.5 h-3.5 text-blue-400" />
+                      Transmission
+                   </div>
+                </div>
                 <textarea 
                   required
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Compose your message regarding prescriptions, test results, or follow-ups..."
-                  className="w-full h-40 px-6 py-5 bg-slate-50 border-2 border-slate-50 rounded-3xl focus:bg-white focus:border-primary-600 outline-none font-bold text-slate-800 transition-all resize-none shadow-inner text-sm leading-relaxed"
+                  placeholder="Compose clinical instruction, result notification, or follow-up protocol..."
+                  className="w-full h-44 px-6 py-5 bg-white border border-slate-200 rounded-[1.5rem] focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none font-semibold text-slate-700 transition-all shadow-sm placeholder:text-slate-400 resize-none leading-relaxed"
                 />
              </div>
 
-             <div className="flex items-center gap-3 p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-100/50">
-                <Info className="w-5 h-5 flex-shrink-0" />
-                <p className="text-[10px] font-bold leading-relaxed uppercase tracking-tight">
-                   Note: This message will be recorded in the patient communication log and is legally discoverable.
+             <div className="flex items-start gap-4 p-5 bg-amber-50/50 text-amber-900 rounded-[1.5rem] border border-amber-100 shadow-sm">
+                <Info className="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5" />
+                <p className="text-[11px] font-semibold leading-relaxed tracking-tight">
+                   Protocol Warning: All transmissions are recorded in the institutional ledger and remain legally discoverable under CMS 2024 compliance.
                 </p>
              </div>
 
-             <button 
-               type="submit"
-               disabled={sending}
-               className="w-full bg-slate-900 hover:bg-primary-600 text-white font-black py-4 rounded-2xl shadow-xl shadow-slate-900/10 active:scale-[0.98] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs disabled:opacity-50 group"
-             >
-               {sending ? (
-                 <>
-                    <Clock className="w-5 h-5 animate-spin" />
-                    Transmitting...
-                 </>
-               ) : (
-                 <>
-                    <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-                    Transmit Message
-                 </>
-               )}
-             </button>
+             <div className="pt-2">
+                <button 
+                  type="submit"
+                  disabled={sending}
+                  className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-5 rounded-3xl shadow-xl shadow-slate-200 active:scale-[0.98] transition-all flex items-center justify-center gap-4 relative overflow-hidden group disabled:opacity-50"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  {sending ? (
+                    <>
+                       <Clock className="w-5 h-5 animate-spin relative z-10" />
+                       <span className="relative z-10 tracking-tight">Transmitting dispatch...</span>
+                    </>
+                  ) : (
+                    <>
+                       <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform relative z-10" />
+                       <span className="relative z-10 tracking-tight uppercase tracking-widest text-xs">Dispatch Message</span>
+                    </>
+                  )}
+                </button>
+             </div>
           </form>
 
-          <div className="flex items-center justify-center gap-2 pt-2 border-t border-slate-50">
-             <ShieldCheck className="w-4 h-4 text-slate-300" />
-             <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest">End-to-End Hospital Encryption Active</span>
+          <div className="flex items-center justify-center gap-3 pt-6 border-t border-slate-50 select-none opacity-50">
+             <ShieldCheck className="w-4 h-4 text-slate-400" />
+             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">End-to-End Encryption Protcols Active</span>
           </div>
         </div>
       </div>
