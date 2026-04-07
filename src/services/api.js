@@ -15,6 +15,24 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Response interceptor to handle errors (401)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      console.warn('⚠️ Unauthorized access detected! Redirecting to login...');
+      // Clear local storage if token is invalid
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      // Force reload to login if not already there
+      if (!window.location.pathname.includes('/login') && window.location.pathname !== '/') {
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authService = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
